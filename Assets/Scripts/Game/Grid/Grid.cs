@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
+    public ShapeStorage shapeStorage;
     public int columns = 0;
     public int rows = 0;
     public float squaresGap = 0.1f;
@@ -20,7 +21,16 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
-    
+    private void OnEnable()
+    {
+        GameEvents.CheckIfShapeCanPlaced += CheckIfShapeCanPlaced;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.CheckIfShapeCanPlaced -= CheckIfShapeCanPlaced;
+    }
+
     private void CreateGrid()
     {
         SpawnGridSquares();
@@ -90,5 +100,19 @@ public class Grid : MonoBehaviour
 
             column_number++;
         }
+    }
+
+    private void CheckIfShapeCanPlaced()
+    {
+        foreach(var square in _gridSquares)
+        {
+            var gridSquare = square.GetComponent<GridSquare>();
+            if (gridSquare.CanWeUsePlaceSquare())
+            {
+                gridSquare.ActivateSquare();
+            }
+        }
+
+        shapeStorage.GetCurrentSelectedShape().DeactivateShape();
     }
 }
