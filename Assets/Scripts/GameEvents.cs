@@ -6,4 +6,5 @@ using UnityEngine;
 public class GameEvents : MonoBehaviour
 {
     public static Action CheckIfShapeCanPlaced;
+    public static Action MoveShapeToStartPosition;
 }
