@@ -128,15 +128,33 @@ public class Grid : MonoBehaviour
             {
                 _gridSquares[index].GetComponent<GridSquare>().PlaceShapeOnBoard();
             }
-            currentSelectedShape.DeactivateShape();
+
+            int shapeLeft = 0;
+
+            foreach(var shape in shapeStorage.shapeList)
+            {
+                if(shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+                {
+                    shapeLeft++;
+                }
+            }
+
+
+            if(shapeLeft == 0)
+            {
+                GameEvents.RequestNewShapes();
+            }
+            else
+            {
+                GameEvents.SetShapeInactive();
+            }
+            
+
         }
         else
         {
             GameEvents.MoveShapeToStartPosition();
         }
-
-        Debug.Log("Total Square Number = " + currentSelectedShape.TotalSquareNumber);
-        Debug.Log("Total SquareInd Number = " + squareIndexes.Count);
 
     }
 }

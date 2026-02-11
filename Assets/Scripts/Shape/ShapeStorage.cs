@@ -16,6 +16,16 @@ public class ShapeStorage : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GameEvents.RequestNewShapes += RequestNewShapes;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.RequestNewShapes -= RequestNewShapes;
+    }
+
     public Shape GetCurrentSelectedShape()
     {
         foreach(var shape in shapeList)
@@ -26,6 +36,15 @@ public class ShapeStorage : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void RequestNewShapes()
+    {
+        foreach (var shape in shapeList)
+        {
+            int shapeIndex = Random.Range(0, shapeData.Count);
+            shape.RequestNewShape(shapeData[shapeIndex]);
+        }
     }
 
 }
