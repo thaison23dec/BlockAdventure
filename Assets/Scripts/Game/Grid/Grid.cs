@@ -13,11 +13,15 @@ public class Grid : MonoBehaviour
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
 
+    private LineIndicator _lineIndicator;
+
     private Vector2 _offSet = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquares = new List<GameObject>();
+
     
     void Start()
     {
+        _lineIndicator = this.GetComponent<LineIndicator>();
         CreateGrid();
     }
 
@@ -49,7 +53,7 @@ public class Grid : MonoBehaviour
                 _gridSquares[_gridSquares.Count - 1].transform.SetParent(this.transform);
                 _gridSquares[_gridSquares.Count - 1].GetComponent<GridSquare>().SquareIndex = square_index;
                 _gridSquares[_gridSquares.Count - 1].transform.localScale = new Vector3(squareScale, squareScale, squareScale);
-                _gridSquares[_gridSquares.Count - 1].GetComponent<GridSquare>().SetImage(square_index % 2 == 0);
+                _gridSquares[_gridSquares.Count - 1].GetComponent<GridSquare>().SetImage(_lineIndicator.GetGridSquareIndex(square_index) % 2 == 0);
                 square_index++;
             }
         }
@@ -148,7 +152,8 @@ public class Grid : MonoBehaviour
             {
                 GameEvents.SetShapeInactive();
             }
-            
+
+            CheckIfAnyLineCompleted();
 
         }
         else
@@ -156,5 +161,92 @@ public class Grid : MonoBehaviour
             GameEvents.MoveShapeToStartPosition();
         }
 
+    }
+
+    private void CheckIfAnyLineCompleted()
+    {
+        List<int[]> lines = new List<int[]>();
+
+        foreach (var column in _lineIndicator.columnIndexes)
+        {
+            lines.Add(_lineIndicator.GetVerticalLine(column));
+        }
+
+        for(int row = 0; row < 9; row++)
+        {
+            List<int> data = new List<int>(9);
+            for(int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.line_data[row, index]);
+            }
+
+            lines.Add(data.ToArray());
+        }
+
+        for(int square = 0; square < 9; square++)
+        {
+            List<int> data = new List<int>();
+            for(int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.square_data[square, index]);
+            }
+            lines.Add(data.ToArray());
+        }
+
+        var completedLines = CheckIfSquaresAreCompleted(lines);
+
+        var totalScores = 10 * completedLines;
+
+        GameEvents.AddScores(totalScores);
+
+    }
+
+    private int CheckIfSquaresAreCompleted(List<int[]> data)
+    {
+        List<int[]> completedLines = new List<int[]>();
+
+        var linesCompleted = 0;
+
+        foreach(var line in data)
+        {
+            var lineCompleted = true;
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
+                if(comp.SquareOccupied == false)
+                {
+                    lineCompleted = false;
+                }
+            }
+
+            if (lineCompleted)
+            {
+                completedLines.Add(line);
+            }
+
+        }
+
+        foreach(var line in completedLines)
+        {
+            var completed = false;
+
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
+                comp.DeactivateSquare();
+                completed = true;
+            }
+            foreach (var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
+                comp.ClearOccupied();
+            }
+
+            if (completed)
+            {
+                linesCompleted++;
+            }
+        }
+        return linesCompleted;
     }
 }
