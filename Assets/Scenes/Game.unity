@@ -446,6 +446,7 @@ MonoBehaviour:
   startPosition: {x: -435, y: 442}
   squareScale: 0.9
   everySquareOffset: 0.5
+  squareTextureData: {fileID: 11400000, guid: 9ccd7dbbf0e5f554b90f9dacd8141f3c, type: 2}
 --- !u!114 &314927204
 MonoBehaviour:
   m_ObjectHideFlags: 0

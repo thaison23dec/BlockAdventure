@@ -12,27 +12,39 @@ public class Grid : MonoBehaviour
     public Vector2 startPosition = new Vector2(0.0f,0.0f);
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
+    public SquareTextureData squareTextureData;
+
 
     private LineIndicator _lineIndicator;
 
     private Vector2 _offSet = new Vector2(0.0f, 0.0f);
     private List<GameObject> _gridSquares = new List<GameObject>();
 
+    private Config.SquareColor currentActiveSquareColor_ = Config.SquareColor.NotSet;
+
     
     void Start()
     {
         _lineIndicator = this.GetComponent<LineIndicator>();
         CreateGrid();
+        currentActiveSquareColor_ = squareTextureData.activeSquareTextures[0].squareColor;
     }
 
     private void OnEnable()
     {
         GameEvents.CheckIfShapeCanPlaced += CheckIfShapeCanPlaced;
+        GameEvents.UpdateSquareColor += OnUpdateSquareColor;
     }
 
     private void OnDisable()
     {
         GameEvents.CheckIfShapeCanPlaced -= CheckIfShapeCanPlaced;
+        GameEvents.UpdateSquareColor -= OnUpdateSquareColor;
+    }
+
+    private void OnUpdateSquareColor(Config.SquareColor color)
+    {
+        currentActiveSquareColor_ = color;
     }
 
     private void CreateGrid()
@@ -130,7 +142,7 @@ public class Grid : MonoBehaviour
         {
             foreach(var index in squareIndexes)
             {
-                _gridSquares[index].GetComponent<GridSquare>().PlaceShapeOnBoard();
+                _gridSquares[index].GetComponent<GridSquare>().PlaceShapeOnBoard(currentActiveSquareColor_);
             }
 
             int shapeLeft = 0;

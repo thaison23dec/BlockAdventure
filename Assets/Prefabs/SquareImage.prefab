@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 7961420168643367467}
   - component: {fileID: 179990563902198846}
   - component: {fileID: 5984243042581893655}
+  - component: {fileID: -3858639370989451419}
   - component: {fileID: -160519095868329520}
   - component: {fileID: -303310492815159531}
   m_Layer: 5
@@ -167,6 +168,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &-3858639370989451419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7721135089452981559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5784ef07db2870a4c8190974093acad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  squareTextureData: {fileID: 11400000, guid: 9ccd7dbbf0e5f554b90f9dacd8141f3c, type: 2}
+  updateImageOnReachedThreshold: 1
 --- !u!61 &-160519095868329520
 BoxCollider2D:
   m_ObjectHideFlags: 0

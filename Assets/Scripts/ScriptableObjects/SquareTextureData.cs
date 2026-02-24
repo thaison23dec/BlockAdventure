@@ -14,7 +14,7 @@ public class SquareTextureData : ScriptableObject
     }
 
     public int thresholdVal;
-    private const int StartThresholdVal = 100;
+    private const int StartThresholdVal = 10;
     public List<TextureData> activeSquareTextures;
 
 
