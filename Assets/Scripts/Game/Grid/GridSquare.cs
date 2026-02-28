@@ -9,12 +9,21 @@ public class GridSquare : MonoBehaviour
     public Image activeImage;
     public Image normalImage;
     public List<Sprite> normalImages;
+    public ActiveSquareImageSelector activeSquareImageSelector;
 
-    private Config.SquareColor currentSquareColor_ = Config.SquareColor.NotSet;
+    public Config.SquareColor currentSquareColor_ = Config.SquareColor.NotSet;
+    private Config.SquareColor lastSquareColor_ = Config.SquareColor.NotSet;
+
 
     public Config.SquareColor GetCurrentColor()
     {
         return currentSquareColor_;
+    }
+
+    private Config.SquareColor GetCurrentActiveColor()
+    {
+        SquareTextureData currentActiveSquareTextureData = gameObject.GetComponentInParent<Grid>().squareTextureData;
+        return currentActiveSquareTextureData.currentColor;
     }
 
     public bool Selected { get; set; }
@@ -34,8 +43,9 @@ public class GridSquare : MonoBehaviour
 
     public void PlaceShapeOnBoard(Config.SquareColor color)
     {
-        currentSquareColor_ = color;
         ActivateSquare();
+        currentSquareColor_ = color;
+        lastSquareColor_ = currentSquareColor_;
     }
 
     public void ActivateSquare()
@@ -60,6 +70,7 @@ public class GridSquare : MonoBehaviour
         SquareOccupied = false;
     }
 
+
     public void SetImage(bool setFirstImage)
     {
         normalImage.GetComponent<Image>().sprite = setFirstImage ? normalImages[1] : normalImages[0];
@@ -71,6 +82,8 @@ public class GridSquare : MonoBehaviour
         {
             this.Selected = true;
             hooverImage.gameObject.SetActive(true);
+            
+            GameEvents.CheckIfAnyLineCanCompeleted(GetCurrentActiveColor());
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
@@ -97,6 +110,7 @@ public class GridSquare : MonoBehaviour
         {
             this.Selected = false;
             hooverImage.gameObject.SetActive(false);
+            GameEvents.UncheckIfAnyLineCanCompeleted();
         }
         else if (collision.GetComponent<ShapeSquare>() != null)
         {

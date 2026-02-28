@@ -7,6 +7,7 @@ public class ActiveSquareImageSelector : MonoBehaviour
 {
     public SquareTextureData squareTextureData;
     public bool updateImageOnReachedThreshold = false;
+    public bool updateImageOnLineCanCompleted = false;
 
     private void OnEnable()
     {
@@ -14,6 +15,10 @@ public class ActiveSquareImageSelector : MonoBehaviour
         if (updateImageOnReachedThreshold)
         {
             GameEvents.UpdateSquareColor += UpdateSquareColor;
+        }
+        if (updateImageOnLineCanCompleted)
+        {
+            GameEvents.CheckIfAnyLineCanCompeleted += ChangeSquareColorBaseOnLineCanCompleted;
         }
     }
 
@@ -30,6 +35,21 @@ public class ActiveSquareImageSelector : MonoBehaviour
         foreach(var squareTexture in squareTextureData.activeSquareTextures)
         {
             if(squareTextureData.currentColor == squareTexture.squareColor)
+            {
+                GetComponent<Image>().sprite = squareTexture.texture;
+            }
+        }
+    }
+
+    public void ChangeSquareColorBaseOnLineCanCompleted(Config.SquareColor color)
+    {
+        if (!gameObject.activeSelf)
+        {
+            return;
+        }
+        foreach(var squareTexture in squareTextureData.activeSquareTextures)
+        {
+            if(color == squareTexture.squareColor)
             {
                 GetComponent<Image>().sprite = squareTexture.texture;
             }

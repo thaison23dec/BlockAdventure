@@ -11,6 +11,10 @@ public class GameEvents : MonoBehaviour
 
     public static Action CheckIfShapeCanPlaced;
 
+    public static Action<Config.SquareColor> CheckIfAnyLineCanCompeleted;
+
+    public static Action UncheckIfAnyLineCanCompeleted;
+
     public static Action MoveShapeToStartPosition;
 
     public static Action RequestNewShapes;

@@ -13,6 +13,7 @@ public class Grid : MonoBehaviour
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
     public SquareTextureData squareTextureData;
+    public List<int[]> lastCanCompletedLine;
 
 
     private LineIndicator _lineIndicator;
@@ -33,12 +34,16 @@ public class Grid : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.CheckIfShapeCanPlaced += CheckIfShapeCanPlaced;
+        GameEvents.CheckIfAnyLineCanCompeleted += CheckIfAnyLineCanCompleted;
+        GameEvents.UncheckIfAnyLineCanCompeleted += UncheckIfAnyLineCanCompleted;
         GameEvents.UpdateSquareColor += OnUpdateSquareColor;
     }
 
     private void OnDisable()
     {
         GameEvents.CheckIfShapeCanPlaced -= CheckIfShapeCanPlaced;
+        GameEvents.CheckIfAnyLineCanCompeleted -= CheckIfAnyLineCanCompleted;
+        GameEvents.UncheckIfAnyLineCanCompeleted -= UncheckIfAnyLineCanCompleted;
         GameEvents.UpdateSquareColor -= OnUpdateSquareColor;
     }
 
@@ -262,6 +267,121 @@ public class Grid : MonoBehaviour
             }
         }
         return linesCompleted;
+    }
+
+    private void CheckIfAnyLineCanCompleted(Config.SquareColor color)
+    {
+        var squareIndexes = new List<int>();
+        foreach (var square in _gridSquares)
+        {
+            var gridSquare = square.GetComponent<GridSquare>();
+            if (gridSquare.Selected && !gridSquare.SquareOccupied)
+            {
+                //gridSquare.ActivateSquare();
+                squareIndexes.Add(gridSquare.SquareIndex);
+            }
+        }
+
+        var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
+
+
+        if (currentSelectedShape == null)
+            return;
+
+        if (currentSelectedShape.TotalSquareNumber != squareIndexes.Count)
+        {
+            return;
+        }
+        
+        List<int[]> lines = new List<int[]>();
+
+        foreach (var column in _lineIndicator.columnIndexes)
+        {
+            lines.Add(_lineIndicator.GetVerticalLine(column));
+        }
+
+        for (int row = 0; row < 9; row++)
+        {
+            List<int> data = new List<int>(9);
+            for (int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.line_data[row, index]);
+            }
+
+            lines.Add(data.ToArray());
+        }
+
+        for (int square = 0; square < 9; square++)
+        {
+            List<int> data = new List<int>();
+            for (int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.square_data[square, index]);
+            }
+            lines.Add(data.ToArray());
+        }
+
+        List<int[]> canCompletedLines =  CheckIfSquareCanCompleted(lines);
+
+        lastCanCompletedLine = canCompletedLines;
+
+
+        foreach (var line in canCompletedLines)
+        {
+            foreach (var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponentInChildren<ActiveSquareImageSelector>();
+                if (comp != null)
+                {
+                    comp.ChangeSquareColorBaseOnLineCanCompleted(color);
+                }
+            }
+        }
+    }
+
+    private List<int[]> CheckIfSquareCanCompleted(List<int[]> data)
+    {
+        List<int[]> canCompletedLines = new List<int[]>();
+
+        foreach(var line in data)
+        {
+            bool lineCanCompleted = true;
+
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
+                if(comp.SquareOccupied == false && comp.Selected == false)
+                {
+                    lineCanCompleted = false;
+                }
+            }
+
+            if (lineCanCompleted)
+            {
+                canCompletedLines.Add(line);
+            }
+        }
+
+        return canCompletedLines;      
+    }
+
+    private void UncheckIfAnyLineCanCompleted()
+    {
+        if (lastCanCompletedLine == null) return;
+        List<int[]> canCompletedLines = lastCanCompletedLine;
+        foreach(var line in canCompletedLines)
+        {
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponentInChildren<ActiveSquareImageSelector>();
+                
+                if (comp != null)
+                {
+                    Config.SquareColor lastColor = _gridSquares[squareIndex].GetComponent<GridSquare>().GetCurrentColor();
+                    comp.ChangeSquareColorBaseOnLineCanCompleted(lastColor);
+                }
+            }
+        }
     }
 
     private void CheckIfPlayerLost()

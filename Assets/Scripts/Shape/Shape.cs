@@ -20,6 +20,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     private Canvas _canvas;
     private Vector3 _startPosition;
     private bool _shapeActive = true;
+    private Config.SquareColor currentActiveSquareColor_ = Config.SquareColor.NotSet;
 
     public void Awake()
     {
@@ -29,6 +30,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         _shapeDraggable = true;
         _startPosition = _transform.localPosition;
         _shapeActive = true;
+        currentActiveSquareColor_ = squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.currentColor;
     }
 
     private void OnEnable()
@@ -359,6 +361,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     public void OnBeginDrag(PointerEventData eventData)
     {
         this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
+        //currentActiveSquareColor_ = squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.currentColor;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -372,6 +375,8 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
                     eventData.position, Camera.main, out pos);
 
         _transform.localPosition = pos + offset;
+
+        //GameEvents.CheckIfAnyLineCanCompeleted(currentActiveSquareColor_);
 
     }
 
