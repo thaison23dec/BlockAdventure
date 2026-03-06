@@ -182,6 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   squareTextureData: {fileID: 11400000, guid: 9ccd7dbbf0e5f554b90f9dacd8141f3c, type: 2}
   updateImageOnReachedThreshold: 1
+  updateImageOnLineCanCompleted: 0
 --- !u!61 &-160519095868329520
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -225,7 +226,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 50, y: 50}
+  m_Size: {x: 64, y: 64}
   m_EdgeRadius: 0
 --- !u!50 &-303310492815159531
 Rigidbody2D:

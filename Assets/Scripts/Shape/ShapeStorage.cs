@@ -6,6 +6,7 @@ public class ShapeStorage : MonoBehaviour
 {
     public List<ShapeData> shapeData;
     public List<Shape> shapeList;
+    public Sprite lastShapeSprite;
 
     void Start()
     {
@@ -45,6 +46,11 @@ public class ShapeStorage : MonoBehaviour
             int shapeIndex = Random.Range(0, shapeData.Count);
             shape.RequestNewShape(shapeData[shapeIndex]);
         }
+    }
+
+    public void SetShapeSprite(Sprite spriteToSet)
+    {
+        lastShapeSprite = spriteToSet;
     }
 
 }

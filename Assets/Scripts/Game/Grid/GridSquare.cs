@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class GridSquare : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GridSquare : MonoBehaviour
     public Image normalImage;
     public List<Sprite> normalImages;
     public ActiveSquareImageSelector activeSquareImageSelector;
+    public GameObject explosionPrefab;
 
     public Config.SquareColor currentSquareColor_ = Config.SquareColor.NotSet;
     private Config.SquareColor lastSquareColor_ = Config.SquareColor.NotSet;
@@ -26,9 +28,9 @@ public class GridSquare : MonoBehaviour
         return currentActiveSquareTextureData.currentColor;
     }
 
-    public bool Selected { get; set; }
+    public bool Selected /*{ get; set; }*/;
     public int SquareIndex { get; set; }
-    public bool SquareOccupied { get; set; }
+    public bool SquareOccupied /*{ get; set; }*/;
 
     private void Start()
     {
@@ -82,8 +84,7 @@ public class GridSquare : MonoBehaviour
         {
             this.Selected = true;
             hooverImage.gameObject.SetActive(true);
-            
-            GameEvents.CheckIfAnyLineCanCompeleted(GetCurrentActiveColor());
+            GameEvents.CheckIfAnyLineCanCompeleted(GetCurrentActiveColor());           
         }
         else if(collision.GetComponent<ShapeSquare>() != null)
         {
@@ -97,6 +98,7 @@ public class GridSquare : MonoBehaviour
         if (!this.SquareOccupied)
         {
             hooverImage.gameObject.SetActive(true);
+            GameEvents.CheckIfAnyLineCanCompeleted(GetCurrentActiveColor());
         }
         else if (collision.GetComponent<ShapeSquare>() != null)
         {
@@ -116,5 +118,30 @@ public class GridSquare : MonoBehaviour
         {
             collision.GetComponent<ShapeSquare>().UnSetOccupiedImage();
         }
+    }
+
+    public void PlayExplodeEffect()
+    {
+        StartCoroutine(PlayExplodeEffectCoroutine());
+    }
+
+    private IEnumerator PlayExplodeEffectCoroutine()
+    {
+        Vector3 firstLocalScale = transform.localScale;
+
+        Tween scaleUp = transform.DOScale(1.2f, 0.1f);
+        yield return scaleUp.WaitForCompletion();
+
+        Tween scaleDown = transform.DOScale(0, 0.2f);
+        yield return scaleDown.WaitForCompletion();
+
+        transform.localScale = firstLocalScale;
+
+        ExplosionManager explosion = FindObjectOfType<ExplosionManager>();
+        explosion.PlayExplosion(transform.position, activeImage.color);
+
+        //yield return new WaitForSeconds(explosion.duration);
+
+        DeactivateSquare();
     }
 }

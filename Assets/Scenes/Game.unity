@@ -389,6 +389,59 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &277295418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 277295419}
+  - component: {fileID: 277295420}
+  m_Layer: 5
+  m_Name: UIExplosionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &277295419
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277295418}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2084556107}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &277295420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277295418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e87d4def1e42443b630046a3a542ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  piecePrefab: {fileID: 7561090763821763025, guid: 8b14846142d484d488013e0655e6a1aa, type: 3}
+  shapeStorage: {fileID: 830570234}
+  pieceCount: 8
+  force: 2
+  duration: 1
 --- !u!1 &314927201
 GameObject:
   m_ObjectHideFlags: 0
@@ -441,7 +494,7 @@ MonoBehaviour:
   shapeStorage: {fileID: 830570234}
   columns: 9
   rows: 9
-  squaresGap: 3
+  squaresGap: 0
   gridSquare: {fileID: 5251752874001184995, guid: 19b6e17e010fd864e88d58936cadc8df, type: 3}
   startPosition: {x: -435, y: 442}
   squareScale: 0.9
@@ -1224,10 +1277,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 65d8fc40994deb042af99d4d83e5d267, type: 2}
   - {fileID: 11400000, guid: 8017aedb58bfdcc4eb7419f521be8f22, type: 2}
   - {fileID: 11400000, guid: c14ee83e43c882847a98941dab26695a, type: 2}
+  - {fileID: 11400000, guid: ae25295f9600897448d36b56200ef286, type: 2}
+  - {fileID: 11400000, guid: 672d29860cc47f1418aa2bd46f56fb64, type: 2}
+  - {fileID: 11400000, guid: b36ddb7d6b814c445a4829ac2d56063f, type: 2}
+  - {fileID: 11400000, guid: 9f986ff899cca08459bca53ab89341ea, type: 2}
+  - {fileID: 11400000, guid: 3762df73bfe268043993f3f9f90368f2, type: 2}
+  - {fileID: 11400000, guid: 18ed15e204a250d4f817612ec3ff08e1, type: 2}
   shapeList:
   - {fileID: 531342278}
   - {fileID: 2113432664}
   - {fileID: 2014694561}
+  lastShapeSprite: {fileID: 0}
 --- !u!114 &830570235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2399,6 +2459,7 @@ RectTransform:
   - {fileID: 998764984}
   - {fileID: 314927202}
   - {fileID: 830570233}
+  - {fileID: 277295419}
   - {fileID: 448058318}
   - {fileID: 673810839}
   - {fileID: 749663445}

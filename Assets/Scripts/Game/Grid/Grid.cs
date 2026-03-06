@@ -252,7 +252,7 @@ public class Grid : MonoBehaviour
             foreach(var squareIndex in line)
             {
                 var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
-                comp.DeactivateSquare();
+                comp.PlayExplodeEffect();
                 completed = true;
             }
             foreach (var squareIndex in line)
@@ -271,6 +271,7 @@ public class Grid : MonoBehaviour
 
     private void CheckIfAnyLineCanCompleted(Config.SquareColor color)
     {
+        Debug.Log("Before");
         var squareIndexes = new List<int>();
         foreach (var square in _gridSquares)
         {
@@ -284,9 +285,9 @@ public class Grid : MonoBehaviour
 
         var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
 
-
         if (currentSelectedShape == null)
             return;
+
 
         if (currentSelectedShape.TotalSquareNumber != squareIndexes.Count)
         {
@@ -337,6 +338,7 @@ public class Grid : MonoBehaviour
                 }
             }
         }
+        Debug.Log("After");
     }
 
     private List<int[]> CheckIfSquareCanCompleted(List<int[]> data)

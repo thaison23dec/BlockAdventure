@@ -361,6 +361,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     public void OnBeginDrag(PointerEventData eventData)
     {
         this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
+        GetComponentInParent<ShapeStorage>().SetShapeSprite(squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.GetCurrentTextureDataSprite());
         //currentActiveSquareColor_ = squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.currentColor;
     }
 
