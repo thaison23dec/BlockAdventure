@@ -25,6 +25,12 @@ public class ExplosionManager : MonoBehaviour
             piece.transform.position = position;
             piece.sprite = shapeStorage.lastShapeSprite;
 
+            float randomLocalScale = (float) Random.Range(0, 100) / 100f;
+
+            Debug.Log(randomLocalScale);
+
+            piece.transform.localScale *= randomLocalScale;
+
             RectTransform rect = piece.rectTransform;
 
             Vector2 randomDir = Random.insideUnitCircle.normalized;
