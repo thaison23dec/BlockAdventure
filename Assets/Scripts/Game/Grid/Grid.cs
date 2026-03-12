@@ -14,6 +14,8 @@ public class Grid : MonoBehaviour
     public float everySquareOffset = 0.0f;
     public SquareTextureData squareTextureData;
     public List<int[]> lastCanCompletedLine;
+    public int comboIndex = 0;
+    public int comboChecker = 0;
 
 
     private LineIndicator _lineIndicator;
@@ -212,6 +214,24 @@ public class Grid : MonoBehaviour
 
         var completedLines = CheckIfSquaresAreCompleted(lines);
 
+        if(completedLines > 0)
+        {
+            comboIndex += completedLines;
+            comboChecker = 0;
+            if(comboIndex > 1 && comboChecker < 2)
+            {
+                GameEvents.ComboActivate(comboIndex);
+            }
+        }
+        else if(completedLines == 0 && comboChecker < 2)
+        {
+            comboChecker++;
+            if(comboChecker == 2)
+            {
+                comboIndex = 0;
+            }
+        }
+
         var totalScores = 10 * completedLines;
 
         GameEvents.AddScores(totalScores);
@@ -271,7 +291,6 @@ public class Grid : MonoBehaviour
 
     private void CheckIfAnyLineCanCompleted(Config.SquareColor color)
     {
-        Debug.Log("Before");
         var squareIndexes = new List<int>();
         foreach (var square in _gridSquares)
         {
@@ -338,7 +357,6 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-        Debug.Log("After");
     }
 
     private List<int[]> CheckIfSquareCanCompleted(List<int[]> data)

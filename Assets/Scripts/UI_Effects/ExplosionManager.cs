@@ -27,8 +27,6 @@ public class ExplosionManager : MonoBehaviour
 
             float randomLocalScale = (float) Random.Range(0, 100) / 100f;
 
-            Debug.Log(randomLocalScale);
-
             piece.transform.localScale *= randomLocalScale;
 
             RectTransform rect = piece.rectTransform;
