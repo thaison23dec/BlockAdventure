@@ -220,6 +220,7 @@ public class Grid : MonoBehaviour
         {
             comboIndex += completedLinesCount;
             comboChecker = 0;
+            textPopUpManager.CheerUpPopUp(comboIndex);
             if(comboIndex > 1 && comboChecker < 2)
             {
                 GameEvents.ComboActivate(comboIndex);
