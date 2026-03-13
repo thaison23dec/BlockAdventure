@@ -14,8 +14,7 @@ public class Grid : MonoBehaviour
     public float everySquareOffset = 0.0f;
     public SquareTextureData squareTextureData;
     public List<int[]> lastCanCompletedLine;
-    public int comboIndex = 0;
-    public int comboChecker = 0;
+    public TextPopUpManager textPopUpManager;
 
 
     private LineIndicator _lineIndicator;
@@ -25,6 +24,8 @@ public class Grid : MonoBehaviour
 
     private Config.SquareColor currentActiveSquareColor_ = Config.SquareColor.NotSet;
 
+    private int comboIndex = 0;
+    private int comboChecker = 0;
     
     void Start()
     {
@@ -213,17 +214,29 @@ public class Grid : MonoBehaviour
         }
 
         var completedLines = CheckIfSquaresAreCompleted(lines);
+        int completedLinesCount = completedLines.Count;
 
-        if(completedLines > 0)
+        if(completedLinesCount > 0)
         {
-            comboIndex += completedLines;
+            comboIndex += completedLinesCount;
             comboChecker = 0;
             if(comboIndex > 1 && comboChecker < 2)
             {
                 GameEvents.ComboActivate(comboIndex);
+                StartCoroutine(ComboAndScoreTextPopUpCoroutine(comboIndex, completedLines));
+            }
+            else
+            {
+                foreach (var line in completedLines)
+                {
+                    foreach (int squareIndex in line)
+                    {
+                        textPopUpManager.TextGridScorePopUp(1, _gridSquares[squareIndex].transform);
+                    }
+                }
             }
         }
-        else if(completedLines == 0 && comboChecker < 2)
+        else if(completedLinesCount == 0 && comboChecker < 2)
         {
             comboChecker++;
             if(comboChecker == 2)
@@ -232,7 +245,7 @@ public class Grid : MonoBehaviour
             }
         }
 
-        var totalScores = 10 * completedLines;
+        var totalScores = 9 * completedLinesCount;
 
         GameEvents.AddScores(totalScores);
 
@@ -240,7 +253,20 @@ public class Grid : MonoBehaviour
 
     }
 
-    private int CheckIfSquaresAreCompleted(List<int[]> data)
+    IEnumerator ComboAndScoreTextPopUpCoroutine(int comboIndex, List<int[]> lines)
+    {
+        GameEvents.ComboActivate(comboIndex);
+        yield return new WaitForSeconds(1f);
+        foreach(var line in lines)
+        {
+            foreach(int squareIndex in line)
+            {
+                textPopUpManager.TextGridScorePopUp(1, _gridSquares[squareIndex].transform);
+            }
+        }
+    }
+
+    private List<int[]> CheckIfSquaresAreCompleted(List<int[]> data)
     {
         List<int[]> completedLines = new List<int[]>();
 
@@ -286,7 +312,7 @@ public class Grid : MonoBehaviour
                 linesCompleted++;
             }
         }
-        return linesCompleted;
+        return completedLines;
     }
 
     private void CheckIfAnyLineCanCompleted(Config.SquareColor color)

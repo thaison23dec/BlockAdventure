@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7048280541122343768}
   - component: {fileID: 7366651292433471044}
   m_Layer: 5
-  m_Name: TextPopUp
+  m_Name: ComboTextPopUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

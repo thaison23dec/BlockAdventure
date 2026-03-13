@@ -5,7 +5,8 @@ using TMPro;
 
 public class TextPopUpManager : MonoBehaviour
 {
-    public GameObject textPopUp;
+    public GameObject comboTextPopUp;
+    public GameObject gridScoretextPopUp;
 
     private void Update()
     {
@@ -31,10 +32,25 @@ public class TextPopUpManager : MonoBehaviour
 
     IEnumerator TextComboPopUpCoroutine(int number)
     {
-        textPopUp.SetActive(true);
-        textPopUp.GetComponent<TextMeshProUGUI>().text = "COMBO x" + number.ToString() + "!";
+        comboTextPopUp.SetActive(true);
+        comboTextPopUp.GetComponent<TextMeshProUGUI>().text = "COMBO x" + number.ToString() + "!";
         yield return new WaitForSeconds(1f);
-        textPopUp.SetActive(false);
+        comboTextPopUp.SetActive(false);
+    }
+
+    public void TextGridScorePopUp(int number, Transform pos)
+    {
+        StartCoroutine(TextGridScorePopUpCoroutine(number, pos));
+    }
+
+    IEnumerator TextGridScorePopUpCoroutine(int number, Transform pos)
+    {
+        GameObject popUp = Instantiate(gridScoretextPopUp, gameObject.transform, true);
+        popUp.GetComponent<TextMeshProUGUI>().text = "+" + number.ToString();
+        popUp.transform.position = pos.position;
+        Debug.Log("popUp: " + popUp.transform.position + " | " + "gridSquare: " + pos.position);
+        yield return new WaitForSeconds(0.75f);
+        Destroy(popUp);
     }
 
 }
