@@ -16,7 +16,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     private List<GameObject> _currentShape = new List<GameObject>();
     private Vector3 _shapeStartScale;
     private RectTransform _transform;
-    private bool _shapeDraggable = true;
     private Canvas _canvas;
     private Vector3 _startPosition;
     private bool _shapeActive = true;
@@ -27,7 +26,6 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
         _shapeStartScale = this.GetComponent<RectTransform>().localScale;
         _transform = this.GetComponent<RectTransform>();
         _canvas = GetComponentInParent<Canvas>();
-        _shapeDraggable = true;
         _startPosition = _transform.localPosition;
         _shapeActive = true;
         currentActiveSquareColor_ = squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.currentColor;
@@ -362,14 +360,15 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     {
         this.GetComponent<RectTransform>().localScale = shapeSelectedScale;
         GetComponentInParent<ShapeStorage>().SetShapeSprite(squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.GetCurrentTextureDataSprite());
+        SoundManager.Instance.PlayPlaceSoundFx();
         //currentActiveSquareColor_ = squareShapeImage.GetComponent<ActiveSquareImageSelector>().squareTextureData.currentColor;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        _transform.anchorMin = new Vector2(0, 0);
-        _transform.anchorMax = new Vector2(0, 0);
-        _transform.pivot = new Vector2(0, 0);
+        //_transform.anchorMin = new Vector2(0, 0);
+        //_transform.anchorMax = new Vector2(0, 0);
+        //_transform.pivot = new Vector2(0, 0);
 
         Vector2 pos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvas.transform as RectTransform,
@@ -385,6 +384,7 @@ public class Shape : MonoBehaviour, IPointerClickHandler, IPointerUpHandler, IBe
     {
         this.GetComponent<RectTransform>().localScale = _shapeStartScale;
         GameEvents.CheckIfShapeCanPlaced();
+        SoundManager.Instance.PlayPlaceSoundFx();
     }
 
     public void OnPointerDown(PointerEventData eventData)

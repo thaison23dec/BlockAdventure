@@ -74,6 +74,7 @@ public class TextPopUpManager : MonoBehaviour
             {
                 cheerUpPopUp.GetComponent<Image>().sprite = cheerUpPopUpData[cheerUpPopUpData.Count - 1].sprite;
             }
+            SoundManager.Instance.PlayVoiceLine(comboIndex - 1);
         }
         else
         {

@@ -18,7 +18,7 @@ public class Scores : MonoBehaviour
     public int _currentScore;
     public Text scoreText;
 
-    private bool newBestScore_ = false;
+    public bool newBestScore = false;
     private BestScoreData bestScore_ = new BestScoreData();
 
     private string bestScoreKey_ = "bsdat"; 
@@ -41,7 +41,7 @@ public class Scores : MonoBehaviour
     void Start()
     {
         _currentScore = 0;
-        newBestScore_ = false;
+        newBestScore = false;
         squareTextureData.SetStartColor();
         UpdateScoreText();
     }
@@ -49,13 +49,11 @@ public class Scores : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.AddScores += AddScores;
-        GameEvents.GameOver += SaveBestScore;
     }
 
     private void OnDisable()
     {
         GameEvents.AddScores -= AddScores;
-        GameEvents.GameOver -= SaveBestScore;
     }
 
     public void SaveBestScore(bool newBestScore)
@@ -74,7 +72,7 @@ public class Scores : MonoBehaviour
         _currentScore += scores;
         if(_currentScore > bestScore_.score)
         {
-            newBestScore_ = true;
+            newBestScore = true;
             bestScore_.score = _currentScore;
             SaveBestScore(true);
         }

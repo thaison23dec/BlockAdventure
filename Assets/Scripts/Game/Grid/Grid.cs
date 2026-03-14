@@ -236,6 +236,7 @@ public class Grid : MonoBehaviour
                     }
                 }
             }
+            SoundManager.Instance.PlayLineCompletedSoundFx();
         }
         else if(completedLinesCount == 0 && comboChecker < 2)
         {
@@ -446,7 +447,7 @@ public class Grid : MonoBehaviour
 
         if(validShapes == 0)
         {
-            GameEvents.GameOver(false);
+            GameEvents.GameOver();
             Debug.Log("Game Over");
         }
     }

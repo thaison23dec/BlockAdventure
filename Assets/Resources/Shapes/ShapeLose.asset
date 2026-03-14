@@ -10,13 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8bcc898eafe415458205bbf2271cb0e, type: 3}
-  m_Name: ShapeTest1
+  m_Name: ShapeLose
   m_EditorClassIdentifier: 
-  columns: 4
-  rows: 5
+  columns: 5
+  rows: 3
   board:
-  - column: 00010000
-  - column: 00010000
-  - column: 00010000
-  - column: 00010000
-  - column: 01010101
+  - column: 0000010000
+  - column: 0101010101
+  - column: 0000010000
