@@ -64,7 +64,8 @@ public class ShapeStorage : MonoBehaviour
     public void RequestSmallShapes(int smallShapeIndex)
     {
         RequestNewShapes();
-        while (true)
+        int attempts = 0;
+        while (attempts < 50)
         {
             int randIndex = Random.Range(0, shapeList.Count - 1);
             if (grid.CheckIfShapeDataCanBePlaceOnGrid(shapeSmallList[smallShapeIndex]))
@@ -72,6 +73,7 @@ public class ShapeStorage : MonoBehaviour
                 shapeList[randIndex].RequestNewShape(shapeSmallList[smallShapeIndex]);
                 break;
             }
+            attempts++;
         }
     }
 
@@ -80,7 +82,8 @@ public class ShapeStorage : MonoBehaviour
         RequestNewShapes();
         foreach (var shape in shapeList)
         {
-            while(true)
+            int attempts = 0;
+            while (attempts < 50)
             {
                 int shapeIndex = Random.Range(0, shapeSmallList.Count - 1);
                 if (grid.CheckIfShapeDataCanBePlaceOnGrid(shapeSmallList[shapeIndex]))
@@ -88,6 +91,7 @@ public class ShapeStorage : MonoBehaviour
                     shape.RequestNewShape(shapeSmallList[shapeIndex]);
                     break;
                 }
+                attempts++;
             }
         }
     }
