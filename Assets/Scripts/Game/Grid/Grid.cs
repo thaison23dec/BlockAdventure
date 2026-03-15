@@ -447,8 +447,36 @@ public class Grid : MonoBehaviour
 
         if(validShapes == 0)
         {
+            int shapeLeft = 0;
+
+            foreach (var shape in shapeStorage.shapeList)
+            {
+                if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+                {
+                    shapeLeft++;
+                }
+            }
+
+
+            if (shapeLeft == shapeStorage.shapeList.Count)
+            {
+                bool canAddSmallShape = false;
+                for(var index = 0; index < shapeStorage.shapeSmallList.Count; index++)
+                {
+                    if (CheckIfShapeDataCanBePlaceOnGrid(shapeStorage.shapeSmallList[index]))
+                    {
+                        shapeStorage.RequestSmallShapes(index);
+                        canAddSmallShape = true;
+                        break;
+                    }
+                }
+                if (canAddSmallShape)
+                {
+                    return;
+                }
+            }
+            Debug.Log(shapeLeft);
             GameEvents.GameOver();
-            Debug.Log("Game Over");
         }
     }
 
@@ -488,6 +516,53 @@ public class Grid : MonoBehaviour
         {
             bool shapeCanBePlacedOnTheBoard = true;
             foreach(var squareIndexToCheck in originalShapeFilledUpSquares)
+            {
+                var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
+                if (comp.SquareOccupied)
+                {
+                    shapeCanBePlacedOnTheBoard = false;
+                }
+            }
+
+            if (shapeCanBePlacedOnTheBoard)
+            {
+                canBePlaced = true;
+            }
+        }
+
+        return canBePlaced;
+    }
+
+    public bool CheckIfShapeDataCanBePlaceOnGrid(ShapeData currentShapeData)
+    {
+        var shapeColumns = currentShapeData.columns;
+        var shapeRows = currentShapeData.rows;
+
+        List<int> originalShapeFilledUpSquares = new List<int>();
+        var squareIndex = 0;
+
+        for (var rowIndex = 0; rowIndex < shapeRows; rowIndex++)
+        {
+            for (var columnIndex = 0; columnIndex < shapeColumns; columnIndex++)
+            {
+                if (currentShapeData.board[rowIndex].column[columnIndex])
+                {
+                    originalShapeFilledUpSquares.Add(squareIndex);
+
+                }
+                squareIndex++;
+            }
+
+        }
+
+        var squareList = GetAllSquaresCombination(shapeColumns, shapeRows);
+
+        bool canBePlaced = false;
+
+        foreach (var number in squareList)
+        {
+            bool shapeCanBePlacedOnTheBoard = true;
+            foreach (var squareIndexToCheck in originalShapeFilledUpSquares)
             {
                 var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
                 if (comp.SquareOccupied)
