@@ -2037,8 +2037,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeData:
-  - {fileID: 11400000, guid: e1bdd048bb1d26e43a01dc6ff580840d, type: 2}
-  - {fileID: 11400000, guid: dd74ec00721d3b74fb3c959c974b467c, type: 2}
+  - {fileID: 11400000, guid: 7f6c865010a3fbe47a49d8ee0fc0184c, type: 2}
+  - {fileID: 11400000, guid: cb15091b3239d3649b49db2f4b843bf9, type: 2}
+  - {fileID: 11400000, guid: 29f8bf518da30754e9925f17663106a6, type: 2}
+  - {fileID: 11400000, guid: 87c04b870598f8e4795c88518fb628be, type: 2}
+  - {fileID: 11400000, guid: 58269e775a60aed4dbbdb2d64f55a1a7, type: 2}
+  - {fileID: 11400000, guid: 85e269d69844c2c4fb4b71162bb63e69, type: 2}
+  - {fileID: 11400000, guid: 68470805d9e96c44ba61fa95cf7c16fc, type: 2}
+  - {fileID: 11400000, guid: 54c73be39fcc98c4ebd74adcc78031ab, type: 2}
+  - {fileID: 11400000, guid: 65d8fc40994deb042af99d4d83e5d267, type: 2}
+  - {fileID: 11400000, guid: 8017aedb58bfdcc4eb7419f521be8f22, type: 2}
+  - {fileID: 11400000, guid: c14ee83e43c882847a98941dab26695a, type: 2}
+  - {fileID: 11400000, guid: ae25295f9600897448d36b56200ef286, type: 2}
+  - {fileID: 11400000, guid: 672d29860cc47f1418aa2bd46f56fb64, type: 2}
+  - {fileID: 11400000, guid: b36ddb7d6b814c445a4829ac2d56063f, type: 2}
+  - {fileID: 11400000, guid: 9f986ff899cca08459bca53ab89341ea, type: 2}
+  - {fileID: 11400000, guid: 3762df73bfe268043993f3f9f90368f2, type: 2}
+  - {fileID: 11400000, guid: 18ed15e204a250d4f817612ec3ff08e1, type: 2}
   shapeList:
   - {fileID: 531342278}
   - {fileID: 2113432664}
@@ -3594,7 +3609,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 946, y: 2048}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
