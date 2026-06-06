@@ -9,14 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8bcc898eafe415458205bbf2271cb0e, type: 3}
-  m_Name: ShapeTest1
+  m_Script: {fileID: 11500000, guid: 617aab39ee5eb95498d65a74164caaf3, type: 3}
+  m_Name: CheerUp2
   m_EditorClassIdentifier: 
-  columns: 4
-  rows: 5
-  board:
-  - column: 00010000
-  - column: 00010000
-  - column: 00010000
-  - column: 00010000
-  - column: 01010101
+  comboIndex: 2
+  sprite: {fileID: 21300000, guid: 2a085bad8b191e6478c410927984b697, type: 3}

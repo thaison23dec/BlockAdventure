@@ -16,4 +16,5 @@ public class Config : MonoBehaviour
         Pink,
         Purple
     };
+
 }

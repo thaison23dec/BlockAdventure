@@ -13,6 +13,8 @@ public class Grid : MonoBehaviour
     public float squareScale = 0.5f;
     public float everySquareOffset = 0.0f;
     public SquareTextureData squareTextureData;
+    public List<int[]> lastCanCompletedLine;
+    public TextPopUpManager textPopUpManager;
 
 
     private LineIndicator _lineIndicator;
@@ -22,6 +24,8 @@ public class Grid : MonoBehaviour
 
     private Config.SquareColor currentActiveSquareColor_ = Config.SquareColor.NotSet;
 
+    private int comboIndex = 0;
+    private int comboChecker = 0;
     
     void Start()
     {
@@ -33,12 +37,16 @@ public class Grid : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.CheckIfShapeCanPlaced += CheckIfShapeCanPlaced;
+        GameEvents.CheckIfAnyLineCanCompeleted += CheckIfAnyLineCanCompleted;
+        GameEvents.UncheckIfAnyLineCanCompeleted += UncheckIfAnyLineCanCompleted;
         GameEvents.UpdateSquareColor += OnUpdateSquareColor;
     }
 
     private void OnDisable()
     {
         GameEvents.CheckIfShapeCanPlaced -= CheckIfShapeCanPlaced;
+        GameEvents.CheckIfAnyLineCanCompeleted -= CheckIfAnyLineCanCompleted;
+        GameEvents.UncheckIfAnyLineCanCompeleted -= UncheckIfAnyLineCanCompleted;
         GameEvents.UpdateSquareColor -= OnUpdateSquareColor;
     }
 
@@ -206,8 +214,40 @@ public class Grid : MonoBehaviour
         }
 
         var completedLines = CheckIfSquaresAreCompleted(lines);
+        int completedLinesCount = completedLines.Count;
 
-        var totalScores = 10 * completedLines;
+        if(completedLinesCount > 0)
+        {
+            comboIndex += completedLinesCount;
+            comboChecker = 0;
+            textPopUpManager.CheerUpPopUp(comboIndex);
+            if(comboIndex > 1 && comboChecker < 2)
+            {
+                GameEvents.ComboActivate(comboIndex);
+                StartCoroutine(ComboAndScoreTextPopUpCoroutine(comboIndex, completedLines));
+            }
+            else
+            {
+                foreach (var line in completedLines)
+                {
+                    foreach (int squareIndex in line)
+                    {
+                        textPopUpManager.TextGridScorePopUp(1, _gridSquares[squareIndex].transform);
+                    }
+                }
+            }
+            SoundManager.Instance.PlayLineCompletedSoundFx();
+        }
+        else if(completedLinesCount == 0 && comboChecker < 2)
+        {
+            comboChecker++;
+            if(comboChecker == 2)
+            {
+                comboIndex = 0;
+            }
+        }
+
+        var totalScores = 9 * completedLinesCount;
 
         GameEvents.AddScores(totalScores);
 
@@ -215,7 +255,20 @@ public class Grid : MonoBehaviour
 
     }
 
-    private int CheckIfSquaresAreCompleted(List<int[]> data)
+    IEnumerator ComboAndScoreTextPopUpCoroutine(int comboIndex, List<int[]> lines)
+    {
+        GameEvents.ComboActivate(comboIndex);
+        yield return new WaitForSeconds(1f);
+        foreach(var line in lines)
+        {
+            foreach(int squareIndex in line)
+            {
+                textPopUpManager.TextGridScorePopUp(1, _gridSquares[squareIndex].transform);
+            }
+        }
+    }
+
+    private List<int[]> CheckIfSquaresAreCompleted(List<int[]> data)
     {
         List<int[]> completedLines = new List<int[]>();
 
@@ -247,7 +300,7 @@ public class Grid : MonoBehaviour
             foreach(var squareIndex in line)
             {
                 var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
-                comp.DeactivateSquare();
+                comp.PlayExplodeEffect();
                 completed = true;
             }
             foreach (var squareIndex in line)
@@ -261,7 +314,122 @@ public class Grid : MonoBehaviour
                 linesCompleted++;
             }
         }
-        return linesCompleted;
+        return completedLines;
+    }
+
+    private void CheckIfAnyLineCanCompleted(Config.SquareColor color)
+    {
+        var squareIndexes = new List<int>();
+        foreach (var square in _gridSquares)
+        {
+            var gridSquare = square.GetComponent<GridSquare>();
+            if (gridSquare.Selected && !gridSquare.SquareOccupied)
+            {
+                //gridSquare.ActivateSquare();
+                squareIndexes.Add(gridSquare.SquareIndex);
+            }
+        }
+
+        var currentSelectedShape = shapeStorage.GetCurrentSelectedShape();
+
+        if (currentSelectedShape == null)
+            return;
+
+
+        if (currentSelectedShape.TotalSquareNumber != squareIndexes.Count)
+        {
+            return;
+        }
+        
+        List<int[]> lines = new List<int[]>();
+
+        foreach (var column in _lineIndicator.columnIndexes)
+        {
+            lines.Add(_lineIndicator.GetVerticalLine(column));
+        }
+
+        for (int row = 0; row < 9; row++)
+        {
+            List<int> data = new List<int>(9);
+            for (int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.line_data[row, index]);
+            }
+
+            lines.Add(data.ToArray());
+        }
+
+        for (int square = 0; square < 9; square++)
+        {
+            List<int> data = new List<int>();
+            for (int index = 0; index < 9; index++)
+            {
+                data.Add(_lineIndicator.square_data[square, index]);
+            }
+            lines.Add(data.ToArray());
+        }
+
+        List<int[]> canCompletedLines =  CheckIfSquareCanCompleted(lines);
+
+        lastCanCompletedLine = canCompletedLines;
+
+
+        foreach (var line in canCompletedLines)
+        {
+            foreach (var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponentInChildren<ActiveSquareImageSelector>();
+                if (comp != null)
+                {
+                    comp.ChangeSquareColorBaseOnLineCanCompleted(color);
+                }
+            }
+        }
+    }
+
+    private List<int[]> CheckIfSquareCanCompleted(List<int[]> data)
+    {
+        List<int[]> canCompletedLines = new List<int[]>();
+
+        foreach(var line in data)
+        {
+            bool lineCanCompleted = true;
+
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponent<GridSquare>();
+                if(comp.SquareOccupied == false && comp.Selected == false)
+                {
+                    lineCanCompleted = false;
+                }
+            }
+
+            if (lineCanCompleted)
+            {
+                canCompletedLines.Add(line);
+            }
+        }
+
+        return canCompletedLines;      
+    }
+
+    private void UncheckIfAnyLineCanCompleted()
+    {
+        if (lastCanCompletedLine == null) return;
+        List<int[]> canCompletedLines = lastCanCompletedLine;
+        foreach(var line in canCompletedLines)
+        {
+            foreach(var squareIndex in line)
+            {
+                var comp = _gridSquares[squareIndex].GetComponentInChildren<ActiveSquareImageSelector>();
+                
+                if (comp != null)
+                {
+                    Config.SquareColor lastColor = _gridSquares[squareIndex].GetComponent<GridSquare>().GetCurrentColor();
+                    comp.ChangeSquareColorBaseOnLineCanCompleted(lastColor);
+                }
+            }
+        }
     }
 
     private void CheckIfPlayerLost()
@@ -279,8 +447,36 @@ public class Grid : MonoBehaviour
 
         if(validShapes == 0)
         {
-            GameEvents.GameOver(false);
-            Debug.Log("Game Over");
+            int shapeLeft = 0;
+
+            foreach (var shape in shapeStorage.shapeList)
+            {
+                if (shape.IsOnStartPosition() && shape.IsAnyOfShapeSquareActive())
+                {
+                    shapeLeft++;
+                }
+            }
+
+
+            if (shapeLeft == shapeStorage.shapeList.Count)
+            {
+                bool canAddSmallShape = false;
+                for(var index = 0; index < shapeStorage.shapeSmallList.Count; index++)
+                {
+                    if (CheckIfShapeDataCanBePlaceOnGrid(shapeStorage.shapeSmallList[index]))
+                    {
+                        shapeStorage.RequestSmallShapes(index);
+                        canAddSmallShape = true;
+                        break;
+                    }
+                }
+                if (canAddSmallShape)
+                {
+                    return;
+                }
+            }
+            Debug.Log(shapeLeft);
+            GameEvents.GameOver();
         }
     }
 
@@ -320,6 +516,53 @@ public class Grid : MonoBehaviour
         {
             bool shapeCanBePlacedOnTheBoard = true;
             foreach(var squareIndexToCheck in originalShapeFilledUpSquares)
+            {
+                var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
+                if (comp.SquareOccupied)
+                {
+                    shapeCanBePlacedOnTheBoard = false;
+                }
+            }
+
+            if (shapeCanBePlacedOnTheBoard)
+            {
+                canBePlaced = true;
+            }
+        }
+
+        return canBePlaced;
+    }
+
+    public bool CheckIfShapeDataCanBePlaceOnGrid(ShapeData currentShapeData)
+    {
+        var shapeColumns = currentShapeData.columns;
+        var shapeRows = currentShapeData.rows;
+
+        List<int> originalShapeFilledUpSquares = new List<int>();
+        var squareIndex = 0;
+
+        for (var rowIndex = 0; rowIndex < shapeRows; rowIndex++)
+        {
+            for (var columnIndex = 0; columnIndex < shapeColumns; columnIndex++)
+            {
+                if (currentShapeData.board[rowIndex].column[columnIndex])
+                {
+                    originalShapeFilledUpSquares.Add(squareIndex);
+
+                }
+                squareIndex++;
+            }
+
+        }
+
+        var squareList = GetAllSquaresCombination(shapeColumns, shapeRows);
+
+        bool canBePlaced = false;
+
+        foreach (var number in squareList)
+        {
+            bool shapeCanBePlacedOnTheBoard = true;
+            foreach (var squareIndexToCheck in originalShapeFilledUpSquares)
             {
                 var comp = _gridSquares[number[squareIndexToCheck]].GetComponent<GridSquare>();
                 if (comp.SquareOccupied)

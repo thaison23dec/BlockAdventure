@@ -52,6 +52,10 @@ public class SquareTextureData : ScriptableObject
 
         thresholdVal = StartThresholdVal + current_score;
     }
+    public Sprite GetCurrentTextureDataSprite()
+    {
+        return activeSquareTextures[GetCurrentColorIndex()].texture;
+    }
 
     public void SetStartColor()
     {
@@ -59,6 +63,7 @@ public class SquareTextureData : ScriptableObject
         currentColor = activeSquareTextures[0].squareColor;
         _nextColor = activeSquareTextures[1].squareColor;
     }
+
 
     private void Awake()
     {
